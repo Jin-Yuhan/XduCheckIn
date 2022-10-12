@@ -1,19 +1,6 @@
 const axios = require('axios');
 
 /**
- * 获取当前时间处于睡/晨/午/晚中的哪一个
- * @param timezone 用户所在时区
- * @returns 睡/晨/午/晚
- */
-function getHourMessage(timezone: number): string {
-  const localDate = new Date();
-  const offsetUTC = localDate.getTimezoneOffset();
-  const targetDate = new Date(localDate.getTime() + offsetUTC * 60 * 1000 + timezone * 3600 * 1000);
-  const hours = targetDate.getHours();
-  return "睡晨午晚"[Math.floor(hours / 6)];
-}
-
-/**
  * 登录
  * @param username 用户名
  * @param password 密码
@@ -34,11 +21,11 @@ async function login(username: string, password: string): Promise<string[]> {
   });
 
   if (response.data.e === 0) {
-    console.log("登陆成功！");
-    return response.headers["set-cookie"] || [];
+    console.log('登陆成功！');
+    return response.headers['set-cookie'] || [];
   }
 
-  throw new Error("登陆失败，服务器响应信息：" + response.data.m);
+  throw new Error('登陆失败，服务器响应信息：' + response.data.m);
 }
 
 /**
@@ -60,15 +47,53 @@ async function commitData(cookies: string[], chenWuWanData: any): Promise<string
   });
 
   if (response.data.e === 0) {
-    console.log("提交请求发送成功！");
+    console.log('提交请求发送成功！');
     return response.data.m;
   }
 
-  throw new Error("提交失败，服务器响应信息：" + response.data.m);
+  throw new Error('提交失败，服务器响应信息：' + response.data.m);
+}
+
+/**
+ * 获取当前时间处于睡/晨/午/晚中的哪一个
+ * @param timezone 用户所在时区
+ * @returns 睡/晨/午/晚
+ */
+function getHourMessage(timezone: number): string {
+  const localDate = new Date();
+  const offsetUTC = localDate.getTimezoneOffset();
+  const targetDate = new Date(localDate.getTime() + offsetUTC * 60 * 1000 + timezone * 3600 * 1000);
+  const hours = targetDate.getHours();
+  return '睡晨午晚'[Math.floor(hours / 6)];
+}
+
+/**
+ * 发送微信消息
+ * @param sendKey Server 酱的 sendKey
+ * @param title 消息标题
+ * @param content 消息内容
+ * @param channel 推送使用的消息通道
+ */
+async function sendWechatMessage(sendKey: string, title: string, content: string, channel = 9): Promise<void> {
+  await axios.request({
+    url: `https://sctapi.ftqq.com/${sendKey}.send`,
+    method: 'POST',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_1_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16D57 wxwork/2.7.2 MicroMessenger/6.3.22 Language/zh'
+    },
+    data: {
+      'title': title,
+      'desp': content,
+      'channel': channel
+    }
+  });
 }
 
 
+// 中国时区：东八区
 const timezone = 8;
+// 晨午晚检信息模板
 const xduChenWuWanData = {
   'area': '陕西省 西安市 长安区',
   'city': '西安市',
@@ -85,18 +110,45 @@ const xduChenWuWanData = {
 
 
 (async () => {
+  // 读取用户信息
+  const username = process.env.CHECKUP_USERNAME!;
+  const password = process.env.CHECKUP_PASSWORD!;
+  const sendKey = process.env.CHECKUP_SENDKEY;
+
+  let message: string;
+  let postStatus: string;
+
   try {
-    // 读取用户信息
-    const username = process.env.CHECKUP_USERNAME!;
-    const password = process.env.CHECKUP_PASSWORD!;
-    
     // 上报
     const cookies = await login(username, password);
-    const message = await commitData(cookies, xduChenWuWanData);
-    console.log(getHourMessage(timezone) + '检');
-    console.log(message);
+    message = await commitData(cookies, xduChenWuWanData);
+    postStatus = '成功';
+
+    console.log('晨午晚检信息上报成功');
   } catch (e) {
-    console.log("晨午晚信息上报失败");
+    // 上报失败
+    message = (<Error>e).message;
+    postStatus = '失败';
+
+    console.log('晨午晚检信息上报失败');
+  }
+
+  if (!sendKey) {
+    console.log('未配置 sendKey，无法发送微信消息');
+    return;
+  }
+
+  try {
+    // 发送微信消息
+    await sendWechatMessage(
+      sendKey,
+      getHourMessage(timezone) + '检信息上报' + postStatus,
+      message
+    );
+
+    console.log('微信消息发送成功');
+  } catch (e) {
+    console.log('微信消息发送失败');
     console.error(e);
   }
 })();

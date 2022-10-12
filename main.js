@@ -36,10 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 var axios = require('axios');
-function getHourMessage() {
-    var hours = new Date().getHours();
-    return "睡晨午晚"[Math.floor(hours / 6)];
-}
 /**
  * 登录
  * @param username 用户名
@@ -66,10 +62,10 @@ function login(username, password) {
                 case 1:
                     response = _a.sent();
                     if (response.data.e === 0) {
-                        console.log("登陆成功！");
-                        return [2 /*return*/, response.headers["set-cookie"] || []];
+                        console.log('登陆成功！');
+                        return [2 /*return*/, response.headers['set-cookie'] || []];
                     }
-                    throw new Error("登陆失败，服务器响应信息：" + response.data.m);
+                    throw new Error('登陆失败，服务器响应信息：' + response.data.m);
             }
         });
     });
@@ -98,16 +94,60 @@ function commitData(cookies, chenWuWanData) {
                 case 1:
                     response = _a.sent();
                     if (response.data.e === 0) {
-                        console.log("提交请求发送成功！");
+                        console.log('提交请求发送成功！');
                         return [2 /*return*/, response.data.m];
                     }
-                    throw new Error("提交失败，服务器响应信息：" + response.data.m);
+                    throw new Error('提交失败，服务器响应信息：' + response.data.m);
             }
         });
     });
 }
-var username = "22009201390";
-var password = "whatdoyouwant2do";
+/**
+ * 获取当前时间处于睡/晨/午/晚中的哪一个
+ * @param timezone 用户所在时区
+ * @returns 睡/晨/午/晚
+ */
+function getHourMessage(timezone) {
+    var localDate = new Date();
+    var offsetUTC = localDate.getTimezoneOffset();
+    var targetDate = new Date(localDate.getTime() + offsetUTC * 60 * 1000 + timezone * 3600 * 1000);
+    var hours = targetDate.getHours();
+    return '睡晨午晚'[Math.floor(hours / 6)];
+}
+/**
+ *
+ * @param sendKey
+ * @param title
+ * @param short
+ * @param content
+ * @param channel
+ */
+function sendWechatMessage(sendKey, title, content, channel) {
+    if (channel === void 0) { channel = 9; }
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios.request({
+                        url: "https://sctapi.ftqq.com/".concat(sendKey, ".send"),
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                            'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_1_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16D57 wxwork/2.7.2 MicroMessenger/6.3.22 Language/zh'
+                        },
+                        data: {
+                            'title': title,
+                            'desp': content,
+                            'channel': channel
+                        }
+                    })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+var timezone = 8;
 var xduChenWuWanData = {
     'area': '陕西省 西安市 长安区',
     'city': '西安市',
@@ -122,26 +162,53 @@ var xduChenWuWanData = {
     'qtqk': '' // 其他情况
 };
 (function () { return __awaiter(_this, void 0, void 0, function () {
-    var cookies, message, e_1;
+    var username, password, sendKey, message, postStatus, cookies, e_1, e_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, login(username, password)];
+                username = process.env.CHECKUP_USERNAME;
+                password = process.env.CHECKUP_PASSWORD;
+                sendKey = process.env.CHECKUP_SENDKEY;
+                _a.label = 1;
             case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, login(username, password)];
+            case 2:
                 cookies = _a.sent();
                 return [4 /*yield*/, commitData(cookies, xduChenWuWanData)];
-            case 2:
-                message = _a.sent();
-                console.log(getHourMessage() + '检');
-                console.log(message);
-                return [3 /*break*/, 4];
             case 3:
+                message = _a.sent();
+                postStatus = '成功';
+                console.log('晨午晚检信息上报成功');
+                return [3 /*break*/, 5];
+            case 4:
                 e_1 = _a.sent();
-                console.log("晨午晚信息上报失败");
-                console.error(e_1);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                // 上报失败
+                message = e_1.message;
+                postStatus = '失败';
+                console.log('晨午晚检信息上报失败');
+                return [3 /*break*/, 5];
+            case 5:
+                if (!sendKey) {
+                    console.log('未配置 sendKey，无法发送微信消息');
+                    return [2 /*return*/];
+                }
+                _a.label = 6;
+            case 6:
+                _a.trys.push([6, 8, , 9]);
+                // 发送微信消息
+                return [4 /*yield*/, sendWechatMessage(sendKey, getHourMessage(timezone) + '检信息上报' + postStatus, message)];
+            case 7:
+                // 发送微信消息
+                _a.sent();
+                console.log('微信消息发送成功');
+                return [3 /*break*/, 9];
+            case 8:
+                e_2 = _a.sent();
+                console.log('微信消息发送失败');
+                console.error(e_2);
+                return [3 /*break*/, 9];
+            case 9: return [2 /*return*/];
         }
     });
 }); })();

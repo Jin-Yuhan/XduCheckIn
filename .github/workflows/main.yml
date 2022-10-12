@@ -16,10 +16,11 @@ jobs:
     env:
       CHECKUP_USERNAME: ${{ secrets.CHECKUP_USERNAME }}
       CHECKUP_PASSWORD: ${{ secrets.CHECKUP_PASSWORD }}
+      CHECKUP_SENDKEY: ${{ secrets.CHECKUP_SENDKEY }}
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
