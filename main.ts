@@ -74,7 +74,7 @@ function getHourMessage(timezone: number): string {
  * @param content 消息内容
  * @param channel 推送使用的消息通道
  */
-async function sendWechatMessage(sendKey: string, title: string, content: string, channel = 9): Promise<void> {
+async function sendWeChatMessage(sendKey: string, title: string, content: string, channel = 9): Promise<void> {
   await axios.request({
     url: `https://sctapi.ftqq.com/${sendKey}.send`,
     method: 'POST',
@@ -140,7 +140,7 @@ const xduChenWuWanData = {
 
   try {
     // 发送微信消息
-    await sendWechatMessage(
+    await sendWeChatMessage(
       sendKey,
       getHourMessage(timezone) + '检信息上报' + postStatus,
       message
