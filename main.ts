@@ -111,9 +111,9 @@ const xduChenWuWanData = {
 
 (async () => {
   // 读取用户信息
-  const username = process.env.CHECKUP_USERNAME!;
-  const password = process.env.CHECKUP_PASSWORD!;
-  const sendKey = process.env.CHECKUP_SENDKEY;
+  const username = process.env.CHECK_IN_USERNAME!;
+  const password = process.env.CHECK_IN_PASSWORD!;
+  const sendKey = process.env.CHECK_IN_SEND_KEY;
 
   let message: string;
   let postStatus: string;

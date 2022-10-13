@@ -19,13 +19,13 @@
 
 |Secret 名称|Secret 值|备注|
 |:-|:-|:-|
-|CHECKUP_USERNAME|用户名（学号）|必填|
-|CHECKUP_PASSWORD|密码|必填|
-|CHECKUP_SENDKEY|Server酱的 SendKey|选填|
+|CHECK_IN_USERNAME|用户名（学号）|必填|
+|CHECK_IN_PASSWORD|密码|必填|
+|CHECK_IN_SEND_KEY|Server酱的 SendKey|选填|
 
 # 测试
 1. 点击「Actions」。
-2. 在左侧选择「CheckUp」，点击「Run workflow」。
+2. 在左侧选择「Auto Check In」，点击「Run workflow」。
 3. 等待运行结果。如果运行成功会显示绿色的对勾。
 
 # 约定
