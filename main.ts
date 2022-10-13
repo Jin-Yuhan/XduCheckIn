@@ -48,7 +48,7 @@ async function commitData(cookies: string[], chenWuWanData: any): Promise<string
 
   if (response.data.e === 0) {
     console.log('提交请求发送成功！');
-    return response.data.m;
+    return '提交成功，服务器响应信息：' + response.data.m;
   }
 
   throw new Error('提交失败，服务器响应信息：' + response.data.m);
