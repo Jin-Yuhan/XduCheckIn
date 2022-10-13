@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CHECKUP_USERNAME: ${{ secrets.CHECK_IN_USERNAME }}
-      CHECKUP_PASSWORD: ${{ secrets.CHECK_IN_PASSWORD }}
-      CHECKUP_SENDKEY: ${{ secrets.CHECK_IN_SEND_KEY }}
+      CHECK_IN_USERNAME: ${{ secrets.CHECK_IN_USERNAME }}
+      CHECK_IN_PASSWORD: ${{ secrets.CHECK_IN_PASSWORD }}
+      CHECK_IN_SEND_KEY: ${{ secrets.CHECK_IN_SEND_KEY }}
 
     strategy:
       matrix:
