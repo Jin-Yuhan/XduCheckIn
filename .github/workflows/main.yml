@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '10 0,4,10 * * *'
+    - cron: '10 4,10,22 * * *'
 
 jobs:
   build:
@@ -30,6 +30,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install
+    - run: npm install --production=false
     - run: npm run build
     - run: node main.js
