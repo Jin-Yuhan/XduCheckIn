@@ -33,9 +33,4 @@
 1. 如果身体有任何疑似新冠肺炎症状的情况，请立即停止使用该程序，并根据实际情况手动填报。
 2. 使用该程序导致的任何不良后果与该程序的作者无关，**应由该程序的使用者承担**。
 
-**请认真考虑后使用！**
-
-# 参考
-首先是 [xdlinux/xidian-scripts](https://github.com/xdlinux/xidian-scripts)。我不少代码都是按照里面的 check_in.py 写的。
-
-其次是 [raspirin/dailycheck](https://github.com/raspirin/dailycheck)。它让我想起了 GitHub Actions。原本我是写在一个微信小程序里的。我还顺便抄了点 README。我比较懒（
+~~（虽然不太可能出问题，但还是在这里说一下）~~
