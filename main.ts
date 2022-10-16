@@ -37,12 +37,21 @@ async function login(username: string, password: string): Promise<string[]> {
 async function commitData(cookies: string[], chenWuWanData: any): Promise<string> {
   const response = await axios.request({
     url: 'https://xxcapp.xidian.edu.cn/xisuncov/wap/open-report/save',
-    method: 'POST',
+
+    // ----------------------------------------------------------
+    // 都什么年代了，还在写传统 POST。在 XDU，GET 也能成功提交信息！
+    // ----------------------------------------------------------
+    method: 'POST', 
+
     headers: {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_1_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16D57 wxwork/2.7.2 MicroMessenger/6.3.22 Language/zh',
       'cookie': cookies
     },
+
+    // ----------------------------------------------------------------------
+    // 都什么年代了，还在用传统方式提交信息。在 XDU，不传 data 也能成功提交信息！
+    // ----------------------------------------------------------------------
     data: chenWuWanData
   });
 
@@ -100,6 +109,10 @@ const xduChenWuWanData = {
   'province': '陕西省',
   'address': '陕西省西安市长安区兴隆街道梧桐大道西安电子科技大学长安校区',
   'geo_api_info': '{"type":"complete","position":{"Q":34.129092068143,"R":108.83138888888902,"lng":108.831389,"lat":34.129092},"location_type":"html5","message":"Get geolocation success.Convert Success.Get address success.","accuracy":65,"isConverted":true,"status":1,"addressComponent":{"citycode":"029","adcode":"610116","businessAreas":[],"neighborhoodType":"","neighborhood":"","building":"","buildingType":"","street":"雷甘路","streetNumber":"266#","country":"中国","province":"陕西省","city":"西安市","district":"长安区","township":"兴隆街道"},"formattedAddress":"陕西省西安市长安区兴隆街道梧桐大道西安电子科技大学长安校区","roads":[],"crosses":[],"pois":[],"info":"SUCCESS"}',
+  
+  // -------------------------------------------
+  // XDU 良好的变量命名规范，省去了混淆代码的麻烦！
+  // -------------------------------------------
   'sfzx': '1',     // 是否在校？
   'tw': '1',       // 体温（36-36.5）
   'sfcyglq': '0',  // 是否处于隔离期
