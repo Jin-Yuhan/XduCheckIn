@@ -25,8 +25,9 @@
 
 # 测试
 1. 点击「Actions」。
-2. 在左侧选择「Auto Check In」，点击「Run workflow」。
-3. 等待运行结果。如果运行成功会显示绿色的对勾。
+2. 在左侧选择「Auto Check In」，点击「Enable workflow」。
+3. 点击「Run workflow」。
+4. 等待运行结果。如果运行成功会显示绿色的对勾。
 
 # 约定
 使用该程序，即代表您同意以下约定：
